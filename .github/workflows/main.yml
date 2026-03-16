@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17' # Cordova Android 12+ usually requires JDK 11 or 17
+          [span_0](start_span)java-version: '17'[span_0](end_span)
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,16 +28,23 @@ jobs:
 
       - name: Install Cordova and Dependencies
         run: |
-          npm install -g cordova
+          [span_1](start_span)npm install -g cordova[span_1](end_span)
           npm install
 
       - name: Prepare and Build Android
         run: |
-          cordova platform add android --nosave
-          cordova build android --release --no-telemetry
+          [span_2](start_span)cordova platform add android --nosave[span_2](end_span)
+          # Building in 'debug' mode is often better for testing without signing
+          [span_3](start_span)cordova build android --debug --no-telemetry[span_3](end_span)
+
+      # This step helps you see the file path in the GitHub Actions log
+      - name: List Generated APKs
+        run: find platforms/android/app/build/outputs/apk/ -name "*.apk"
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: android-release-apk
-          path: platforms/android/app/build/outputs/apk/release/*.apk
+          name: android-debug-apk
+          # Using ** ensures we find the APK regardless of the folder structure
+          path: platforms/android/app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
