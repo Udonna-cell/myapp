@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          [span_0](start_span)java-version: '17'[span_0](end_span)
+          java-version: '17' # This is Line 19 - ensured 10 spaces of indentation
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,13 +28,13 @@ jobs:
 
       - name: Install Cordova and Dependencies
         run: |
-          [span_1](start_span)npm install -g cordova[span_1](end_span)
+          npm install -g cordova
           npm install
 
       - name: Prepare and Build Android
         run: |
-          [span_2](start_span)cordova platform add android --nosave[span_2](end_span)
-          [span_3](start_span)cordova build android --debug --no-telemetry[span_3](end_span)
+          cordova platform add android --nosave
+          cordova build android --debug --no-telemetry
 
       - name: List Generated APKs
         run: find platforms/android/app/build/outputs/apk/ -name "*.apk"
@@ -45,3 +45,4 @@ jobs:
           name: android-debug-apk
           path: platforms/android/app/build/outputs/apk/**/*.apk
           if-no-files-found: error
+
