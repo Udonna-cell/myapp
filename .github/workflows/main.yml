@@ -34,10 +34,8 @@ jobs:
       - name: Prepare and Build Android
         run: |
           [span_2](start_span)cordova platform add android --nosave[span_2](end_span)
-          # Building in 'debug' mode is often better for testing without signing
           [span_3](start_span)cordova build android --debug --no-telemetry[span_3](end_span)
 
-      # This step helps you see the file path in the GitHub Actions log
       - name: List Generated APKs
         run: find platforms/android/app/build/outputs/apk/ -name "*.apk"
 
@@ -45,6 +43,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android-debug-apk
-          # Using ** ensures we find the APK regardless of the folder structure
           path: platforms/android/app/build/outputs/apk/**/*.apk
           if-no-files-found: error
