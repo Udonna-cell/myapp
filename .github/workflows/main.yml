@@ -1,48 +1,39 @@
-name: Build Cordova Android
+name: Build Android APK
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Source
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Java (JDK 17)
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
+          java-version: '17'
           distribution: 'temurin'
-          java-version: '17' # This is Line 19 - ensured 10 spaces of indentation
 
-      - name: Setup Node.js
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Node.js & Cordova
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+      
+      - run: npm install -g cordova
+      - run: npm install # Installs workspace dependencies
 
-      - name: Install Cordova and Dependencies
+      - name: Build Cordova App
         run: |
-          npm install -g cordova
-          npm install
-
-      - name: Prepare and Build Android
-        run: |
-          cordova platform add android --nosave
-          cordova build android --debug --no-telemetry
-
-      - name: List Generated APKs
-        run: find platforms/android/app/build/outputs/apk/ -name "*.apk"
+          cd apps/app-one
+          cordova platform add android
+          cordova build android --release
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: android-debug-apk
-          path: platforms/android/app/build/outputs/apk/**/*.apk
-          if-no-files-found: error
-
+          name: release-apk
+          path: apps/app-one/platforms/android/app/build/outputs/apk/release/*.apk
